@@ -8,7 +8,7 @@ const input_category = ref(null);
 
 const todos_asc = computed(() =>
   todos.value.sort((a, b) => {
-    return b.createdAt - a.createdAt;
+    return a.createdAt - b.createdAt;
   })
 );
 
@@ -24,6 +24,10 @@ const addTodo = () => {
     createdAt: new Date().getTime()
   })
 };
+
+const removeTodo = (todo) => {
+  todos.value = todos.value.filter(t => t !== todo)
+}  
 
 watch(todos, newVal => {
   localStorage.setItem('todos', JSON.stringify(newVal))
@@ -49,7 +53,7 @@ onMounted(() => {
       </h2>
     </section>
     <section class="create-todo">
-      <h3>CREATE A TODO</h3>
+      <h3>CREATE A TO-DO</h3>
       <form @submit="addTodo">
         <h4>What's on your to-do list?</h4>
         <input
@@ -89,11 +93,29 @@ onMounted(() => {
     <section class="todo-list">
       <h3>TO-DO LIST</h3>
       <div class="list">
-        <div v-for="todo in todos_asc" :class="`todo-item ${todo.done && 'done'}`"></div>
+        <div v-for="todo in todos_asc" :class="`todo-item ${todo.done && 'done'}`">
+        
+          <label>
+            <input type="checkbox" v-model="todo.done">
+            <span :class="`bubble ${todo.category}`"></span>
+          </label>
+
+          <div class="todo-content">
+            <input type="text" v-model="todo.content">
+          </div>
+
+          <div class="actions">
+            <button class="delete" @click="removeTodo(todo)">Delete</button>
+          </div>
+
+        </div>
       </div>
     </section>
-
   </main>
+  <footer class="footer">
+    <p>© 2024 Vondev. Todos os direitos reservados.</p>
+  </footer>
+  
 </template>
 
 <style scoped></style>
